@@ -1,30 +1,13 @@
-import React, {Component} from 'react'
-import HomeScreen from './src/screens/HomeScreen'
+import { createStackNavigator, createAppContainer } from 'react-navigation'
 
-export default class App extends Component {
-  render() {
-    return (
-      <HomeScreen />
-    );
-  }
-}
+import HomeScreen from './src/screens/HomeScreen/'
+import TripsScreen from './src/screens/TripsScreen'
+import TripScreen from './src/screens/TripScreen'
 
-/*const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
-*/
+const AppNavigator = createStackNavigator({
+  Home: HomeScreen,
+  Trips: TripsScreen,
+  Trip: TripScreen
+}, { initialRouteName: 'Home' })
+
+export default createAppContainer(AppNavigator)
