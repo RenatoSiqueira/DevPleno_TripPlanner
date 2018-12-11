@@ -3,6 +3,8 @@
 ### Construção de um TripPlanner
 - Construção de um gerenciador de viagens, desde a concepção (prototipação) no Figma até sua conclusão, com marcadores no mapa (utilizando o google maps).
 
+![Figma Project](https://github.com/RenatoSiqueira/DevPleno_TripPlanner/blob/master/figma.png)
+
 ### Assuntos Abordados
 - Criação do Projeto (prototipação) no Figma
 - Create-React-Native
