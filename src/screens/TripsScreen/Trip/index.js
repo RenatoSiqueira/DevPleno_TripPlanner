@@ -14,7 +14,7 @@ const Trip = props => {
                 <Text style={ styles.dateTrip }>{ props.date }</Text>
             </View>
 
-            <Text style={ styles.price }>{ props.price }</Text>
+            <Text style={ styles.price }>R$ { props.price.toFixed(2) }</Text>
         </TouchableOpacity>
     )
 }

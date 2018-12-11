@@ -45,10 +45,15 @@ const style = StyleSheet.create({
         left: 16,
         bottom: 8
     },
-    add: {
-        position: 'absolute',
-        bottom: 10,
-        right: 20
+    input: {
+        backgroundColor: '#E5E5E5',
+        padding: 20,
+        marginBottom: 16
+    },
+    btn: {
+        backgroundColor: '#E5E5E5',
+        padding: 20,
+        marginBottom: 16
     }
 })
 

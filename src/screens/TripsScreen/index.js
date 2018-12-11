@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { View, Image, FlatList } from 'react-native'
+import { View, Image, FlatList, TouchableOpacity, AsyncStorage } from 'react-native'
+import MapView from 'react-native-maps'
 import Trip from './Trip'
 
 import assets from './assets'
@@ -11,29 +12,94 @@ class TripsScreen extends Component {
         header: null
     }
 
+    state = {
+        trips: []
+    }
+
     renderItem = item => {
-        return <Trip onPress={ () => this.props.navigation.navigate('Trip') } title={item.item.name} date={item.item.date} price={item.item.price} />
+        return <Trip 
+            onPress={ () => this.props.navigation.navigate('Trip', { id: item.item.id, refresh: this.loadData }) } 
+            title={item.item.trip} date={item.item.date} price={item.item.price} 
+        />
+    }
+
+    componentDidMount() {
+        this.loadData()
+    }
+
+    loadData = async() => {
+        const tripsAS = await AsyncStorage.getItem('trips')
+        let trips = []
+        if(tripsAS) {
+            trips = JSON.parse(tripsAS)
+        }
+        this.setState({ trips })
+    }
+
+    handleItemChange = info => {
+        const { viewableItems } = info
+        if(viewableItems && viewableItems.length > 0) {
+            const [item] = viewableItems
+            this.map.animateToRegion(
+                this.regionFrom(item.item.latitude, item.item.longitude, 1000),
+                1000
+            )
+        }
+    }
+
+    regionFrom = (lat, lon, distance) => {
+        distance = distance/2
+        const circumference = 40075
+        const oneDegreeOfLatitudeInMeters = 111.32 * 1000
+        const angularDistance = distance/circumference
+
+        const latitudeDelta = distance / oneDegreeOfLatitudeInMeters
+        const longitudeDelta = Math.abs(Math.atan2(
+                Math.sin(angularDistance)*Math.cos(lat),
+                Math.cos(angularDistance) - Math.sin(lat) * Math.sin(lat)))
+
+        return result = {
+            latitude: lat,
+            longitude: lon,
+            latitudeDelta,
+            longitudeDelta,
+        }
     }
 
     render() {
 
-        const trips = [
-            { id: '1', name: 'Eurotrip 2019', price: '5.000', date: '22 JAN > 23 FEV' },
-            { id: '2', name: 'Expedição Atacama', price: '5.000', date: '22 JAN > 23 FEV' },
-        ]
+        const { trips } = this.state
 
         return (
             <View style={ styles.background }>
 
-                <Image source={ assets.map } />
+                <View style={{ flex: 1 }} >
+                    <MapView
+                        style={ styles.maps }
+                        initialRegion={{
+                            latitude: 37.78825,
+                            longitude: -122.4324,
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421
+                        }}
+                        ref={ ref => this.map = ref }
+                    />
+                    <TouchableOpacity 
+                        onPress={ () => this.props.navigation.navigate('AddTrip', { refresh: this.loadData }) }
+                        style={ styles.add }
+                    >
+                            <Image source={ assets.add } />
+                    </TouchableOpacity>
+                </View>
 
                 <FlatList 
                     data={trips}
                     renderItem={this.renderItem}
                     horizontal
                     pagingEnabled
-                    keyExtractor={ item => item.id }
-                    style={[ isIphoneX() ? { marginBottom: 10 } : null ]}
+                    keyExtractor={ item => item.id.toString() }
+                    style={[ isIphoneX() ? { marginBottom: 10 } : null , { flex: 2 }]}
+                    onViewableItemsChanged={ this.handleItemChange }
                 />
 
             </View>
